@@ -1,0 +1,287 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { 
+  Heart, 
+  MapPin, 
+  Calendar, 
+  Clock, 
+  Music, 
+  Music2, 
+  Instagram, 
+  ChevronDown, 
+  ExternalLink 
+} from 'lucide-react';
+
+/**
+ * ==========================================
+ * DATA UNDANGAN (EDIT DI SINI)
+ * ==========================================
+ * Silakan ganti teks di bawah ini.
+ * Jika foto sudah ada di folder project/GitHub Anda, 
+ * ganti URL-nya menjadi nama filenya saja (contoh: "cowok.jpg").
+ */
+const DATA_UNDANGAN = {
+  // --- Pengantin Pria ---
+  nama_panggilan_cowo: "Aliandra",
+  nama_lengkap_cowo: "Aliandra Reliandi, S.T.",
+  orang_tua_cowo: "Putra Kedua dari Bapak Doddy Garnadi & Ibu Demayanti Shakuntala",
+  foto_pengantin_cowo: "https://images.unsplash.com/photo-1550005814-19069d316e13?q=80&w=800", 
+  ig_cowo: "@aliandra",
+
+  // --- Pengantin Wanita ---
+  nama_panggilan_cewe: "Adinda",
+  nama_lengkap_cewe: "Adinda Farsyadhia, S.Sn.",
+  orang_tua_cewe: "Putri Kedua dari Bapak Indra Koesoemo & Ibu Mita Damayanti",
+  foto_pengantin_cewe: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=800", 
+  ig_cewe: "@adinda",
+  
+  // --- Detail Acara ---
+  tanggal_format_mesin: "2024-09-15T19:00:00", // Format: YYYY-MM-DD
+  teks_hari_tanggal: "Minggu, 15 September 2024",
+  jam_acara: "19:00 - 21:00 WIB",
+  lokasi_nama: "Ballroom 3, Sheraton Grand Jakarta",
+  lokasi_alamat: "Gandaria City Hotel, Kebayoran Lama, Jakarta Selatan",
+  link_google_maps: "https://maps.app.goo.gl/...",
+
+  // --- Kata Mutiara ---
+  kutipan_ayat: "Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu pasangan-pasangan dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya, dan dijadikan-Nya diantaramu rasa kasih dan sayang. Sesungguhnya pada yang demikian itu benar-benar terdapat tanda-tanda bagi kaum yang berpikir.",
+  sumber_ayat: "QS. Ar-Rum: 21",
+
+  // --- Galeri & Background ---
+  foto_utama_depan: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=1200", 
+  foto_galeri_1: "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800",
+  foto_galeri_2: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?q=80&w=800",
+  foto_galeri_3: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=800"
+};
+
+// --- Komponen Animasi Bunga Timbul ---
+const BungaTimbul = ({ className, delay = 0, scale = 1 }: { className: string; delay?: number; scale?: number }) => (
+  <motion.div
+    className={`absolute pointer-events-none opacity-40 z-10 ${className}`}
+    initial={{ scale: 0, opacity: 0, rotate: -30 }}
+    whileInView={{ scale: scale, opacity: 0.5, rotate: 0 }}
+    transition={{ duration: 1.8, delay, ease: "easeOut" }}
+  >
+    <svg width="60" height="60" viewBox="0 0 40 40" fill="none">
+      <path d="M20 0C21.1 5.5 25.5 9.9 31 11C25.5 12.1 21.1 16.5 20 22C18.9 16.5 14.5 12.1 9 11C14.5 9.9 18.9 5.5 20 0Z" fill="#C5A58E"/>
+    </svg>
+  </motion.div>
+);
+
+// --- Halaman Cover ---
+const Cover = ({ onOpen }: { onOpen: () => void }) => (
+  <motion.div 
+    className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#fdfaf6] p-6 text-center"
+    exit={{ y: '-100%', opacity: 0 }}
+    transition={{ duration: 1, ease: "easeInOut" }}
+  >
+     <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')]" />
+     <BungaTimbul className="top-10 left-10" delay={0.2} scale={1.5} />
+     <BungaTimbul className="bottom-20 right-10" delay={0.5} scale={2} />
+     
+     <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
+        <p className="font-serif italic text-gray-400 tracking-[5px] uppercase text-xs mb-4">The Wedding of</p>
+        <h1 className="font-serif text-5xl md:text-7xl text-[#8d6e63] mb-8 leading-tight">
+          {DATA_UNDANGAN.nama_panggilan_cowo} & {DATA_UNDANGAN.nama_panggilan_cewe}
+        </h1>
+        <div className="mb-10">
+          <p className="font-serif text-sm text-gray-500 mb-2">Kepada Yth. Bapak/Ibu/Saudara/i</p>
+          <p className="font-serif text-2xl font-bold text-[#8d6e63]">Tamu Undangan</p>
+        </div>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={onOpen}
+          className="flex items-center gap-3 bg-[#8d6e63] text-white px-10 py-3 rounded-full font-serif shadow-xl"
+        >
+          <Music2 size={18} /> Buka Undangan
+        </motion.button>
+     </motion.div>
+  </motion.div>
+);
+
+export default function App() {
+  const [isOpened, setIsOpened] = useState(false);
+  const [timeLeft, setTimeLeft] = useState({ d: 0, h: 0, m: 0, s: 0 });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = new Date(DATA_UNDANGAN.tanggal_format_mesin).getTime() - now;
+      if (distance > 0) {
+        setTimeLeft({
+          d: Math.floor(distance / (1000 * 60 * 60 * 24)),
+          h: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          m: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+          s: Math.floor((distance % (1000 * 60)) / 1000)
+        });
+      }
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-[#fdfaf6] selection:bg-[#d2b48c] font-sans">
+      <AnimatePresence>
+        {!isOpened && <Cover onOpen={() => setIsOpened(true)} />}
+      </AnimatePresence>
+
+      {isOpened && (
+        <div className="max-w-[480px] mx-auto shadow-2xl bg-white min-h-screen relative">
+          
+          {/* Section 1: Hero (Teks & Foto Timbul) */}
+          <section className="relative h-screen flex items-center justify-center overflow-hidden">
+            <motion.img 
+              initial={{ scale: 1.3, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 2.5 }}
+              src={DATA_UNDANGAN.foto_utama_depan} 
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/30" />
+            
+            <div className="relative z-10 text-center text-white px-6">
+              <motion.p 
+                initial={{ opacity: 0, x: 100 }} 
+                animate={{ opacity: 1, x: 0 }} 
+                transition={{ duration: 1.5, delay: 0.5 }}
+                className="font-serif italic text-xl mb-2"
+              >
+                The Wedding of
+              </motion.p>
+              <motion.h2 
+                initial={{ opacity: 0, scale: 0.5 }} 
+                animate={{ opacity: 1, scale: 1 }} 
+                transition={{ duration: 2, ease: "backOut" }}
+                className="font-serif text-6xl mb-6 shadow-text"
+              >
+                {DATA_UNDANGAN.nama_panggilan_cowo} & {DATA_UNDANGAN.nama_panggilan_cewe}
+              </motion.h2>
+              <motion.p 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                transition={{ delay: 1.5 }}
+                className="tracking-[5px] uppercase text-xs font-bold"
+              >
+                {DATA_UNDANGAN.teks_hari_tanggal}
+              </motion.p>
+            </div>
+            <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 2, repeat: Infinity }} className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/50">
+              <ChevronDown size={30} />
+            </motion.div>
+          </section>
+
+          {/* Section 2: Ayat (Bunga Timbul Samping) */}
+          <section className="py-24 px-10 text-center bg-[#fdfaf6] relative">
+            <BungaTimbul className="top-0 left-0" delay={0.2} />
+            <BungaTimbul className="bottom-0 right-0 rotate-180" delay={0.4} />
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.2 }} viewport={{ once: true }}>
+              <Heart className="mx-auto text-[#d2b48c] mb-6" fill="#d2b48c" size={24} />
+              <p className="font-serif italic text-gray-600 leading-relaxed text-sm">"{DATA_UNDANGAN.kutipan_ayat}"</p>
+              <p className="font-serif font-bold mt-4 text-[#8d6e63]">{DATA_UNDANGAN.sumber_ayat}</p>
+            </motion.div>
+          </section>
+
+          {/* Section 3: Pengantin (Foto Bulat & Animasi Membesar) */}
+          <section className="py-20 bg-white">
+            <h3 className="text-center font-serif text-3xl text-[#8d6e63] mb-12">Mempelai</h3>
+            
+            {/* PRIA */}
+            <div className="text-center mb-20 px-8">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.2 }} 
+                whileInView={{ opacity: 1, scale: 1 }} 
+                transition={{ duration: 1.2, type: "spring" }}
+                className="w-64 h-80 mx-auto mb-6 rounded-t-full rounded-b-lg overflow-hidden shadow-2xl border-4 border-[#fdfaf6]"
+              >
+                <img src={DATA_UNDANGAN.foto_pengantin_cowo} className="w-full h-full object-cover" alt="Groom" />
+              </motion.div>
+              <motion.h4 initial={{ x: -100, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 1 }} className="font-serif text-2xl text-[#8d6e63] mb-1">{DATA_UNDANGAN.nama_lengkap_cowo}</motion.h4>
+              <p className="text-xs text-gray-400 italic mb-3">{DATA_UNDANGAN.orang_tua_cowo}</p>
+              <a href="#" className="inline-flex items-center gap-1 text-[#d2b48c] text-sm"><Instagram size={14} /> {DATA_UNDANGAN.ig_cowo}</a>
+            </div>
+
+            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 0.3 }} className="text-center font-serif text-6xl text-[#d2b48c] my-4">&</motion.div>
+
+            {/* WANITA */}
+            <div className="text-center mt-12 px-8">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.2 }} 
+                whileInView={{ opacity: 1, scale: 1 }} 
+                transition={{ duration: 1.2, type: "spring" }}
+                className="w-64 h-80 mx-auto mb-6 rounded-t-full rounded-b-lg overflow-hidden shadow-2xl border-4 border-[#fdfaf6]"
+              >
+                <img src={DATA_UNDANGAN.foto_pengantin_cewe} className="w-full h-full object-cover" alt="Bride" />
+              </motion.div>
+              <motion.h4 initial={{ x: 100, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 1 }} className="font-serif text-2xl text-[#8d6e63] mb-1">{DATA_UNDANGAN.nama_lengkap_cewe}</motion.h4>
+              <p className="text-xs text-gray-400 italic mb-3">{DATA_UNDANGAN.orang_tua_cewe}</p>
+              <a href="#" className="inline-flex items-center gap-1 text-[#d2b48c] text-sm"><Instagram size={14} /> {DATA_UNDANGAN.ig_cewe}</a>
+            </div>
+          </section>
+
+          {/* Section 4: Countdown & Detail Acara */}
+          <section className="py-20 px-8 bg-[#f5efea] text-center">
+            <h3 className="font-serif text-3xl text-[#8d6e63] mb-10">Resepsi</h3>
+            <motion.div initial={{ y: 50, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} transition={{ duration: 1 }} className="bg-white p-8 rounded-3xl shadow-lg mb-8">
+              <Calendar className="mx-auto text-[#d2b48c] mb-3" />
+              <p className="font-serif text-xl font-bold mb-1">{DATA_UNDANGAN.teks_hari_tanggal}</p>
+              <p className="text-sm text-gray-500 mb-6">{DATA_UNDANGAN.jam_acara}</p>
+              <div className="border-t border-gray-100 pt-6">
+                <MapPin className="mx-auto text-[#d2b48c] mb-3" />
+                <p className="font-bold text-[#8d6e63]">{DATA_UNDANGAN.lokasi_nama}</p>
+                <p className="text-xs text-gray-400 mt-2 mb-4">{DATA_UNDANGAN.lokasi_alamat}</p>
+                <a href={DATA_UNDANGAN.link_google_maps} className="inline-block bg-[#8d6e63] text-white px-6 py-2 rounded-full text-xs font-bold shadow-md">Buka Maps</a>
+              </div>
+            </motion.div>
+
+            {/* Countdown Animasi */}
+            <div className="grid grid-cols-4 gap-2">
+              {[
+                {l:'Hari',v:timeLeft.d}, {l:'Jam',v:timeLeft.h}, {l:'Menit',v:timeLeft.m}, {l:'Detik',v:timeLeft.s}
+              ].map((t,i)=>(
+                <motion.div key={i} initial={{ scale: 0 }} whileInView={{ scale: 1 }} transition={{ delay: i*0.1 }} className="bg-white/50 p-2 rounded-xl border border-[#d2b48c]/30">
+                  <p className="text-xl font-serif font-bold text-[#8d6e63]">{t.v}</p>
+                  <p className="text-[10px] uppercase text-gray-400">{t.l}</p>
+                </motion.div>
+              ))}
+            </div>
+          </section>
+
+          {/* Section 5: Galeri Keluar dari Samping */}
+          <section className="py-20 px-4 bg-white">
+            <h3 className="text-center font-serif text-3xl text-[#8d6e63] mb-8">Galeri</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {[DATA_UNDANGAN.foto_galeri_1, DATA_UNDANGAN.foto_galeri_2, DATA_UNDANGAN.foto_galeri_3, DATA_UNDANGAN.foto_utama_depan].map((u, i)=>(
+                <motion.div key={i} initial={{ opacity:0, x: i % 2 === 0 ? -50 : 50 }} whileInView={{ opacity:1, x: 0 }} transition={{ duration:1 }} className="overflow-hidden rounded-xl h-44 shadow-lg">
+                  <img src={u} className="w-full h-full object-cover" alt="Galeri" />
+                </motion.div>
+              ))}
+            </div>
+          </section>
+
+          {/* Footer */}
+          <footer className="py-20 px-10 text-center bg-[#fdfaf6]">
+             <Heart className="mx-auto text-red-100 mb-6" fill="#fee2e2" size={30} />
+             <p className="font-serif italic text-gray-500 mb-10 text-sm">Terima kasih atas segala doa dan restunya.</p>
+             <h4 className="font-serif text-3xl text-[#8d6e63]">
+               {DATA_UNDANGAN.nama_panggilan_cowo} & {DATA_UNDANGAN.nama_panggilan_cewe}
+             </h4>
+          </footer>
+
+          {/* Musik Floating Tombol */}
+          <div className="fixed bottom-6 right-6 z-40">
+            <motion.button animate={{ rotate: 360 }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }} className="p-4 bg-white shadow-2xl rounded-full text-[#8d6e63] border border-[#d2b48c]/20">
+              <Music size={20} />
+            </motion.button>
+          </div>
+
+        </div>
+      )}
+    </div>
+  );
+}
